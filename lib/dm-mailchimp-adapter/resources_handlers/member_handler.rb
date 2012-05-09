@@ -7,11 +7,27 @@ module Mailchimp
       end
       
       def create collection
-        raise NotImplementedError.new
+        result = []
+        collection.group_by { |m| m.list_id }.each do |list_id, members|
+          result << @connection.list_batch_subscribe(
+            list_id, 
+            members.map {|m| {'EMAIL' => m.email}},
+            @options[:list_on_subscribe_double_optin], 
+            @options[:list_on_subscribe_update_exiting],
+            @options[:list_on_subscribe_replace_interests]
+          )
+        end
+        
+        result.flatten.all? {|r| p r; r['error_count'] <= 0 }
       end
     
       def update attributes, collection
-        raise NotImplementedError.new
+        result = true
+        collection.group_by { |m| m.list_id }.each do |list_id, members|
+          members.each {|m| result &&= @connection.list_update_member(list_id, m.email, m.attributes)}
+        end
+        
+        result.flatten.all? {|r| r['error_count'] <= 0 }
       end
     
       def read query
@@ -23,6 +39,15 @@ module Mailchimp
         }.flatten
 
         query.filter_records members
+      end
+      
+      def delete collection
+        result = []
+        collection.group_by { |m| m.list_id }.each do |list_id, members|
+          result << @connection.list_batch_unsubscribe(list_id, members.map(&:email), true, false ,false)
+        end
+        
+        result.flatten.all? {|r| r['error_count'] <= 0 }
       end
     end
   end

@@ -1,9 +1,19 @@
 module Mailchimp
   module ResourceHandlers
     class AbstractResourceHandler
-      def initialize model, connection
+      def initialize model, connection, options
+        
         @model      = model
         @connection = connection
+        @options    = options
+        
+        default = {
+          :list_on_subscribe_double_optin       => false, 
+          :list_on_subscribe_update_exiting     => false,
+          :list_on_subscribe_replace_interests  => false
+        }
+        
+        @options = default.merge(@options)
       end
 
       def create collection

@@ -26,21 +26,26 @@ module Mailchimp
     end
     
     def create(collection)
+      return true if collection.empty?
+      
       with_connection do |connection|
-        handler_for(collection.model, connection).create(collection)
+        handler_for(collection.first.model, connection).create(collection)
       end
     end
 
     def update(attributes, collection)
+      return true if collection.empty?
+      
       with_connection do |connection|
-        handler_for(collection.model, connection).update(attributes, collection)
+        handler_for(collection.first.model, connection).update(attributes, collection)
       end
     end
-  
 
     def delete(collection)
+      return true if collection.empty?
+      
       with_connection do |connection|
-        handler_for(collection.model, connection).delete(collection)
+        handler_for(collection.first.model, connection).delete(collection)
       end
     end
 
@@ -59,7 +64,7 @@ module Mailchimp
         raise 'Invalid Model Given: ' << model.storage_name
       end
       
-      handler.new(model, connection)
+      handler.new(model, connection, options)
     end
   end
 end
