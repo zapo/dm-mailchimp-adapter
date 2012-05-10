@@ -1,11 +1,7 @@
 module Mailchimp
   module ResourceHandlers
     class MemberHandler < AbstractResourceHandler
-      
-      def lists
-        @lists ||= @connection.lists['data'] rescue []
-      end
-      
+
       def create collection
         result = []
         collection.group_by { |m| m.list_id }.each do |list_id, members|
@@ -18,14 +14,6 @@ module Mailchimp
           )
         end
         result.flatten.map {|r| r['add_count']}.reduce(:+)
-      end
-    
-      def update attributes, collection
-        result = true
-        collection.group_by { |m| m.list_id }.each do |list_id, members|
-          members.each {|m| result &&= @connection.list_update_member(list_id, m.email, m.attributes)}
-        end
-        result.flatten.map {|r| r['update_count']}.reduce(:+)
       end
     
       def read query
@@ -42,10 +30,22 @@ module Mailchimp
       def delete collection
         result = []
         collection.group_by { |m| m.list_id }.each do |list_id, members|
-          result << @connection.list_batch_unsubscribe(list_id, members.map(&:email), true, false ,false)
+          result << @connection.list_batch_unsubscribe(
+            list_id, 
+            members.map(&:email), 
+            @options[:list_on_unsubscribe_delete_member],
+            @options[:list_on_unsubscribe_send_goodbye] ,
+            @options[:list_on_unsubscribe_send_notify]
+          )
         end
         
         result.flatten.map {|r| r['delete_count']}.reduce(:+)
+      end
+      
+      private
+      
+      def lists
+        @lists ||= @connection.lists['data'] rescue []
       end
     end
   end
