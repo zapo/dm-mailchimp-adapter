@@ -8,10 +8,10 @@ module Mailchimp
   class Adapter < ::DataMapper::Adapters::AbstractAdapter
     Inflector = ::DataMapper::Inflector
   end
+  
+  LOGGER = Logger.new(DataMapper.logger.log)
+  LOGGER.progname = 'MailchimpAdapter'
 end
-
-LOGGER = Logger.new(DataMapper.logger.log)
-LOGGER.progname = 'MailchimpAdapter'
 
 require 'dm-mailchimp-adapter/version'
 require 'dm-mailchimp-adapter/models'
