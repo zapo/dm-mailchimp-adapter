@@ -8,7 +8,7 @@ module Mailchimp
     end
     
     def field_naming_convention
-       proc {|property| property.name.to_s }
+      proc {|property| property.name.to_s }
     end
 
     def resource_naming_convention
@@ -26,7 +26,7 @@ module Mailchimp
     end
     
     def create(collection)
-      return true if collection.empty?
+      return 0 if collection.empty?
       
       with_connection do |connection|
         handler_for(collection.first.model, connection).create(collection)
@@ -34,7 +34,7 @@ module Mailchimp
     end
 
     def update(attributes, collection)
-      return true if collection.empty?
+      return 0 if collection.empty?
       
       with_connection do |connection|
         handler_for(collection.first.model, connection).update(attributes, collection)
@@ -42,7 +42,7 @@ module Mailchimp
     end
 
     def delete(collection)
-      return true if collection.empty?
+      return 0 if collection.empty?
       
       with_connection do |connection|
         handler_for(collection.first.model, connection).delete(collection)

@@ -17,8 +17,7 @@ module Mailchimp
             @options[:list_on_subscribe_replace_interests]
           )
         end
-        
-        result.flatten.all? {|r| p r; r['error_count'] <= 0 }
+        result.flatten.map {|r| r['add_count']}.reduce(:+)
       end
     
       def update attributes, collection
@@ -26,8 +25,7 @@ module Mailchimp
         collection.group_by { |m| m.list_id }.each do |list_id, members|
           members.each {|m| result &&= @connection.list_update_member(list_id, m.email, m.attributes)}
         end
-        
-        result.flatten.all? {|r| r['error_count'] <= 0 }
+        result.flatten.map {|r| r['update_count']}.reduce(:+)
       end
     
       def read query
@@ -47,7 +45,7 @@ module Mailchimp
           result << @connection.list_batch_unsubscribe(list_id, members.map(&:email), true, false ,false)
         end
         
-        result.flatten.all? {|r| r['error_count'] <= 0 }
+        result.flatten.map {|r| r['delete_count']}.reduce(:+)
       end
     end
   end
