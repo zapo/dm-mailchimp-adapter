@@ -14,9 +14,9 @@ Gem::Specification.new do |gem|
   gem.name          = "dm-mailchimp-adapter"
   gem.require_paths = ["lib"]
   gem.version       = Mailchimp::VERSION
-  
-  gem.add_runtime_dependency "dm-core", "~> 1.1.0"
-  gem.add_runtime_dependency "dm-types","~> 1.1.0"
-  gem.add_runtime_dependency "dm-validations","~> 1.1.0"
+
+  gem.add_runtime_dependency "dm-core", "~> 1.2.0"
+  gem.add_runtime_dependency "dm-types","~> 1.2.0"
+  gem.add_runtime_dependency "dm-validations","~> 1.2.0"
   gem.add_runtime_dependency "hominid"
 end
